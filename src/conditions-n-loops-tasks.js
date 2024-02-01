@@ -511,18 +511,26 @@ function rotateMatrix(matrix) {
  */
 function sortByAsc(arr) {
   const arr2 = arr;
-  let i = 0;
-  while (i < arr.length - 1) {
-    let x = 0;
-    while (x < arr.length - 1 - i) {
-      if (arr2[x] > arr2[x + 1]) {
-        const arr2ch = arr2[x];
-        arr2[x] = arr2[x + 1];
-        arr2[x + 1] = arr2ch;
-      }
-      x += 1;
+  if (arr.length <= 1) {
+    return arr;
+  }
+  const first = arr[0];
+  const farLeft = [];
+  const farRight = [];
+  let i = 1;
+  while (i < arr.length) {
+    if (arr[i] >= first) {
+      farRight[farRight.length] = arr[i];
+    } else {
+      farLeft[farLeft.length] = arr[i];
     }
     i += 1;
+  }
+  const outcome = [...sortByAsc(farLeft), first, ...sortByAsc(farRight)];
+  let x = 0;
+  while (x < outcome.length) {
+    arr2[x] = outcome[x];
+    x += 1;
   }
   return arr2;
 }
@@ -545,22 +553,25 @@ function sortByAsc(arr) {
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
 function shuffleChar(str, iterations) {
-  let iterations2 = iterations;
   let str2 = str;
-  while (iterations2 > 0) {
-    let str3 = '';
-    let i = 0;
-    while (i < str.length - 1) {
-      str3 += str2[i];
-      i += 2;
-    }
-    let x = 1;
+  let i = 1;
+  while (i <= iterations) {
+    let farRight = '';
+    let farLeft = '';
+    let x = 0;
     while (x < str.length) {
-      str3 += str2[x];
-      x += 2;
+      if (x % 2 === 0) {
+        farLeft += str2[x];
+      } else {
+        farRight += str2[x];
+      }
+      x += 1;
     }
-    iterations2 -= 1;
-    str2 = str3;
+    str2 = farLeft + farRight;
+    if (str2 === str) {
+      return shuffleChar(str, iterations % i);
+    }
+    i += 1;
   }
   return str2;
 }
